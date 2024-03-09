@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drag and Drop Boxes</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+        margin: 0;
+      }
+      .container {
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      .drag-box {
+        border-radius: 5px;
+        border: 2px solid rgb(183, 189, 194);
+        margin: 5px;
+        cursor: move;
+        display: block;
+        padding: 10px 20px;
+        width: 100%;
+      }
+      .drop-zone {
+        gap: 10px;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 12px;
+        margin-bottom: 12px;
+        /* width: 90%; */
+        min-height: 60px;
+      }
+      .top__heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .left__top,
+      .right__top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      #main_container1,
+      #main_container2,
+      #main_container3 {
+        width: 33.6%;
+        /* background-color: aqua; */
+        padding: 20px 40px;
+      }
+
+      #heading__txt1,
+      #heading__txt2,
+      #heading__txt3 {
+        font-size: 16px;
+        padding: 6px 10px;
+        border-radius: 5px;
+      }
+
+      #heading__txt1 {
+        background-color: pink;
+      }
+      #heading__txt2 {
+        background-color: lightyellow;
+      }
+      #heading__txt3 {
+        background-color: rgb(22, 218, 218);
+      }
+      .count_txt {
+        color: gainsboro;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .icon_style,
+      .new_txt_style {
+        color: rgb(183, 189, 194);
+        cursor: pointer;
+      }
+
+      .new_txt_style {
+        font-weight: bold;
+      }
+
+      /* The Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 600px;
+      }
+
+      .modal-header {
+        padding: 10px 20px;
+        border-bottom: 1px solid #ddd;
+        color: #333;
+      }
+
+      .modal-body {
+        padding: 20px;
+      }
+
+      #newCardInput {
+        height: 40px;
+        border-radius: 5px;
+        font-size: 18px;
+        padding: 5px;
+        margin-top: 10px;
+      }
+
+      #label_txt {
+        color: rgb(3, 4, 4);
+        padding: 15px 0;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .modal-footer {
+        padding: 10px 20px;
+        border-top: 1px solid #ddd;
+        text-align: right;
+      }
+
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .add_task_btn {
+        padding: 10px 20px;
+        background-color: rgba(3, 16, 133, 0.84);
+        color: #fefefe;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="main_container1">
+        <div class="top__heading">
+          <div class="left__top">
+            <h3 id="heading__txt1">Not Started</h3>
+            <p class="count_txt" id="notStartedTaskCount"></p>
+          </div>
+          <div class="right__top">
+            <i class="fa fa-ellipsis-h icon_style"></i>
+            <i class="fa fa-plus icon_style"></i>
+          </div>
+        </div>
+        <div
+          class="drop-zone"
+          id="notStartedDropZone"
+          
+        ></div>
+        <div id="add_new_started1" onclick="showModal('notStartedDropZone')">
+          <i class="fa fa-plus icon_style"></i>
+          <span class="new_txt_style">New</span>
+        </div>
+      </div>
+      <div id="main_container2">
+        <div class="top__heading">
+          <div class="left__top">
+            <h3 id="heading__txt2">In Progress</h3>
+            <p class="count_txt" id="inProgressTaskCount"></p>
+          </div>
+          <div class="right__top">
+            <i class="fa fa-ellipsis-h icon_style"></i>
+            <i class="fa fa-plus icon_style"></i>
+          </div>
+        </div>
+        <div
+          class="drop-zone"
+          id="InProgressDropZone"
+          
+        ></div>
+
+        <div id="add_new_started2" onclick="showModal('InProgressDropZone')">
+          <i class="fa fa-plus icon_style"></i>
+          <span class="new_txt_style">New</span>
+        </div>
+      </div>
+      <div id="main_container3">
+        <div class="top__heading">
+          <div class="left__top">
+            <h3 id="heading__txt3">Completed</h3>
+            <p class="count_txt" id="completedTaskCount"></p>
+          </div>
+          <div class="right__top">
+            <i class="fa fa-ellipsis-h icon_style"></i>
+            <i class="fa fa-plus icon_style"></i>
+          </div>
+        </div>
+        <div
+          class="drop-zone"
+          id="completedDropZone"
+          
+        ></div>
+        <div id="add_new_started3" onclick="showModal('completedDropZone')">
+          <i class="fa fa-plus icon_style"></i>
+          <span class="new_txt_style">New</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="close" onclick="closeModal()">&times;</span>
+          <h2>Adding in task</h2>
+        </div>
+        <div class="modal-body">
+          <label for="newCardInput" id="label_txt">New Task:</label>
+          <br />
+          <input
+            type="text"
+            name="cards"
+            id="newCardInput"
+            placeholder="Enter your task"
+          />
+        </div>
+        <div class="modal-footer">
+          <button class="add_task_btn" onclick="addNewCard()">Add Task</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+
+      // Set the initial cards in local storage
+      const initialCards = {
+        notStartedDropZone: ["Card 4", "Card 1", "Card 5"],
+        InProgressDropZone: ["Card 2"],
+        completedDropZone: ["Card 3"],
+      };
+
+      for (const key in initialCards) {
+        if (initialCards.hasOwnProperty(key)) {
+          localStorage.setItem(key, JSON.stringify(initialCards[key]));
+        }
+      }
+
+      // Apply the initial cards to the HTML using a map function
+      Object.keys(initialCards).forEach((key) => {
+        const cards = JSON.parse(localStorage.getItem(key));
+        const dropZone = document.getElementById(key);
+        cards.forEach((card) => {
+          const newCard = document.createElement("div");
+          newCard.className = "drag-box";
+          newCard.draggable = true;
+          newCard.textContent = card;
+          dropZone.appendChild(newCard);
+        });
+        if(key === 'notStartedDropZone'){
+            document.getElementById('notStartedTaskCount').textContent = cards?.length >0 &&  cards?.length;
+        }else if(key === 'completedDropZone'){
+            document.getElementById('completedTaskCount').textContent = cards?.length > 0 && cards?.length;
+        }else if(key === 'InProgressDropZone'){
+            document.getElementById('inProgressTaskCount').textContent = cards?.length > 0 && cards?.length; 
+        }
+      });
+
+      let currentDropZoneId = "";
+
+      function showModal(dropZoneId) {
+        console.log("clicked open ", dropZoneId);
+        currentDropZoneId = dropZoneId;
+        const modal = document.getElementById("myModal");
+        modal.style.display = "block";
+      }
+
+      function closeModal() {
+        const modal = document.getElementById("myModal");
+        modal.style.display = "none";
+      }
+
+      function addNewCard() {
+        const newCardText = document.getElementById("newCardInput").value;
+        if (newCardText.trim() === "") {
+          alert("Please enter a task.");
+          return;
+        }
+
+        const newCard = document.createElement("div");
+        newCard.className = "drag-box";
+        newCard.draggable = true;
+        newCard.textContent = newCardText;
+        // newCard.addEventListener("dragstart", drag);
+        newCard.addEventListener("dragstart", () => {
+          newCard.classList.add("dragging");
+        });
+        newCard.addEventListener("dragend", () => {
+          newCard.classList.remove("dragging");
+        });
+        const dropZone = document.getElementById(currentDropZoneId);
+        dropZone.appendChild(newCard);
+
+        // Update local storage
+        const cards = JSON.parse(localStorage.getItem(currentDropZoneId)) || [];
+        cards.push(newCardText);
+        localStorage.setItem(currentDropZoneId, JSON.stringify(cards));
+        if(currentDropZoneId === 'notStartedDropZone'){
+            document.getElementById('notStartedTaskCount').textContent = cards?.length >0 &&  cards?.length;
+        }else if(currentDropZoneId === 'completedDropZone'){
+            document.getElementById('completedTaskCount').textContent = cards?.length > 0 && cards?.length;
+        }else if(currentDropZoneId === 'InProgressDropZone'){
+            document.getElementById('inProgressTaskCount').textContent = cards?.length > 0 && cards?.length; 
+        }
+
+        // Clear the input fields and close the popup
+        document.getElementById("newCardInput").value = "";
+        closeModal();
+      }
+
+      const draggables = document.querySelectorAll(".drag-box");
+      const notStartedDropZone = document.getElementById("notStartedDropZone");
+      const InProgressDropZone = document.getElementById("InProgressDropZone");
+      const completedDropZone = document.getElementById("completedDropZone");
+
+      draggables.forEach((draggable) => {
+        draggable.addEventListener("dragstart", () => {
+          draggable.classList.add("dragging");
+        });
+        draggable.addEventListener("dragend", () => {
+          draggable.classList.remove("dragging");
+        });
+      });
+
+      notStartedDropZone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+      });
+
+      notStartedDropZone.addEventListener("drop", (event) => {
+        event.preventDefault();
+        const droppedElement = document.querySelector(".dragging");
+        const newCardText = droppedElement?.innerHTML;
+        if (droppedElement) {
+          const targetElement = event.target.closest(".drag-box");
+          if (targetElement) {
+            
+            targetElement.parentNode.insertBefore(
+              droppedElement,
+              targetElement
+            );
+          } else {
+            notStartedDropZone.appendChild(droppedElement);
+          }
+            const notStartedTaskList = JSON.parse(localStorage.getItem('notStartedDropZone')) || [];
+            const inprogressTaskList = JSON.parse(localStorage.getItem('InProgressDropZone')) || [];
+            const completedTaskList = JSON.parse(localStorage.getItem('completedDropZone')) || [];
+            notStartedTaskList.push(newCardText);
+            const filteredInProgressList = inprogressTaskList.filter((val)=> val != newCardText)
+            const filteredCompletedList = completedTaskList.filter((val)=> val != newCardText)
+
+            localStorage.setItem('notStartedDropZone', JSON.stringify(notStartedTaskList));
+            localStorage.setItem('completedDropZone', JSON.stringify(filteredCompletedList));
+            localStorage.setItem('InProgressDropZone', JSON.stringify(filteredInProgressList));
+
+            document.getElementById('inProgressTaskCount').textContent = filteredInProgressList?.length > 0 && filteredInProgressList?.length;
+            document.getElementById('completedTaskCount').textContent = filteredCompletedList?.length > 0 && filteredCompletedList?.length;
+            document.getElementById('notStartedTaskCount').textContent = notStartedTaskList?.length >0 &&  notStartedTaskList?.length;
+        }
+      });
+
+      InProgressDropZone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+      });
+
+      InProgressDropZone.addEventListener("drop", (event) => {
+        event.preventDefault();
+        const droppedElement = document.querySelector(".dragging");
+        const newCardText = droppedElement?.innerHTML;
+        if (droppedElement) {
+          const targetElement = event.target.closest(".drag-box");
+          if (targetElement) {
+            targetElement.parentNode.insertBefore(
+              droppedElement,
+              targetElement
+            );
+          } else {
+            InProgressDropZone.appendChild(droppedElement);
+          }
+
+          const notStartedTaskList = JSON.parse(localStorage.getItem('notStartedDropZone')) || [];
+            const inprogressTaskList = JSON.parse(localStorage.getItem('InProgressDropZone')) || [];
+            const completedTaskList = JSON.parse(localStorage.getItem('completedDropZone')) || [];
+            inprogressTaskList.push(newCardText);
+            const filterednotStartedList = notStartedTaskList.filter((val)=> val != newCardText)
+            const filteredCompletedList = completedTaskList.filter((val)=> val != newCardText)
+
+            localStorage.setItem('notStartedDropZone', JSON.stringify(filterednotStartedList));
+            localStorage.setItem('completedDropZone', JSON.stringify(filteredCompletedList));
+            localStorage.setItem('InProgressDropZone', JSON.stringify(inprogressTaskList));
+            document.getElementById('inProgressTaskCount').textContent = inprogressTaskList?.length > 0 && inprogressTaskList?.length;
+            document.getElementById('completedTaskCount').textContent = filteredCompletedList?.length > 0 && filteredCompletedList?.length;
+            document.getElementById('notStartedTaskCount').textContent = filterednotStartedList?.length >0 &&  filterednotStartedList?.length;
+        }
+      });
+      completedDropZone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+      });
+
+      completedDropZone.addEventListener("drop", (event) => {
+        event.preventDefault();
+        const droppedElement = document.querySelector(".dragging");
+        const newCardText = droppedElement?.innerHTML;
+        if (droppedElement) {
+          const targetElement = event.target.closest(".drag-box");
+          if (targetElement) {
+            targetElement.parentNode.insertBefore(
+              droppedElement,
+              targetElement
+            );
+          } else {
+            completedDropZone.appendChild(droppedElement);
+          }
+
+            const notStartedTaskList = JSON.parse(localStorage.getItem('notStartedDropZone')) || [];
+            const inprogressTaskList = JSON.parse(localStorage.getItem('InProgressDropZone')) || [];
+            const completedTaskList = JSON.parse(localStorage.getItem('completedDropZone')) || [];
+            
+            completedTaskList.push(newCardText);
+            const filteredInProgressList = inprogressTaskList.filter((val)=> val != newCardText)
+            const filterednotStartedList = notStartedTaskList.filter((val)=> val != newCardText)
+
+            localStorage.setItem('notStartedDropZone', JSON.stringify(filterednotStartedList));
+            localStorage.setItem('completedDropZone', JSON.stringify(completedTaskList));
+            localStorage.setItem('InProgressDropZone', JSON.stringify(filteredInProgressList));
+            document.getElementById('inProgressTaskCount').textContent = filteredInProgressList?.length > 0 && filteredInProgressList?.length;
+            document.getElementById('completedTaskCount').textContent = completedTaskList?.length > 0 && completedTaskList?.length;
+            document.getElementById('notStartedTaskCount').textContent = filterednotStartedList?.length >0 &&  filterednotStartedList?.length;
+        }
+      });
+    </script>
+  </body>
+</html>
